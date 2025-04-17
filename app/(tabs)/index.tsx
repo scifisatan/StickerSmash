@@ -1,7 +1,7 @@
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
 
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Alert } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useState, useRef } from "react";
 import { captureRef } from "react-native-view-shot";
@@ -16,22 +16,23 @@ import EmojiList from "@/components/EmojiList";
 import EmojiSticker from "@/components/EmojiSticker";
 
 import { type ImageSource } from "expo-image";
-import { BG_COLOR } from "@/app/constants";
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from "@/constants";
+import { useTheme } from "@/hooks/useTheme";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
-
-export const IMAGE_WIDTH = 320;
-export const IMAGE_HEIGHT = 440;
 
 export default function Index() {
   const imageRef = useRef<View>(null);
   const [status, requestPermission] = MediaLibrary.usePermissions();
+
   const [image, setImage] = useState(PlaceholderImage);
   const [showAppOptions, setShowAppOptions] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [pickedEmojis, setPickedEmojis] = useState<ImageSource[]>([]);
+  const { colors, theme } = useTheme();
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
+
   const onReset = () => {
     setImage(PlaceholderImage);
     setPickedEmojis([]);
@@ -50,16 +51,34 @@ export default function Index() {
     if (Platform.OS !== "web") {
       try {
         const localUri = await captureRef(imageRef, {
-          // height: 440,
           quality: 1,
         });
 
         await MediaLibrary.saveToLibraryAsync(localUri);
         if (localUri) {
-          alert("Saved!");
+          Alert.alert(
+            "Successfully Saved!",
+            "Your image has been saved to your photos.",
+            [
+              {
+                text: "OK",
+                style: "default",
+                onPress: () => setShowAppOptions(false),
+              },
+            ],
+            {
+              cancelable: true,
+              userInterfaceStyle: theme === "light" ? "light" : "dark",
+            }
+          );
         }
       } catch (e) {
-        console.log(e);
+        Alert.alert(
+          "Error",
+          "Failed to save image",
+          [{ text: "OK", style: "cancel" }],
+          { cancelable: true }
+        );
       } finally {
         setIsSaving(false);
       }
@@ -76,7 +95,6 @@ export default function Index() {
         link.href = dataUrl;
         link.click();
       } catch (e) {
-        console.log(e);
       } finally {
         setIsSaving(false);
       }
@@ -92,8 +110,6 @@ export default function Index() {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-    } else {
-      alert("You did not select any image.");
     }
   };
   if (status === null) {
@@ -101,7 +117,9 @@ export default function Index() {
   }
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <GestureHandlerRootView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <View
         style={{
           width: IMAGE_WIDTH,
@@ -109,14 +127,11 @@ export default function Index() {
         }}
         ref={imageRef}
         collapsable={false}
-        onLayout={(e) => {
-          console.log("x, y", e.nativeEvent.layout.x, e.nativeEvent.layout.y);
-        }}
       >
         <ImageViewer imgSource={image} />
         {pickedEmojis.length > 0 &&
           pickedEmojis.map((emoji, index) => (
-            <EmojiSticker key={index} imageSize={40} stickerSource={emoji} />
+            <EmojiSticker key={index} emojiSize={40} stickerSource={emoji} />
           ))}
       </View>
       <View
@@ -166,7 +181,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BG_COLOR,
     alignItems: "center",
   },
 

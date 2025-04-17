@@ -1,38 +1,49 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { StyleSheet, FlatList, Platform, Pressable } from "react-native";
-import { Image, type ImageSource } from "expo-image";
+import { Image, ImageSource } from "expo-image";
+import AddEmojiButton from "./AddEmojiButton";
+import { EmojiContext } from "@/context/EmojiContext";
 
 type Props = {
   onSelect: (image: ImageSource) => void;
   onCloseModal: () => void;
 };
 
-export default function EmojiList({ onSelect, onCloseModal }: Props) {
-  const [emoji] = useState<ImageSource[]>([
-    require("../assets/images/emoji1.png"),
-    require("../assets/images/emoji2.png"),
-    require("../assets/images/emoji3.png"),
-    require("../assets/images/emoji4.png"),
-    require("../assets/images/emoji5.png"),
-    require("../assets/images/emoji6.png"),
-  ]);
+export default function EmojisList({ onSelect, onCloseModal }: Props) {
+  const { emojis } = useContext(EmojiContext);
+
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: ImageSource;
+    index: number;
+  }) => {
+    const isLastItem = index === emojis.length - 1;
+
+    if (isLastItem) {
+      return <AddEmojiButton />;
+    }
+
+    return (
+      <Pressable
+        onPress={() => {
+          onSelect(item);
+          onCloseModal();
+        }}
+      >
+        <Image source={item} key={index} style={styles.image} />
+      </Pressable>
+    );
+  };
 
   return (
     <FlatList
       horizontal
       showsHorizontalScrollIndicator={Platform.OS === "web"}
-      data={emoji}
+      data={emojis}
       contentContainerStyle={styles.listContainer}
-      renderItem={({ item, index }) => (
-        <Pressable
-          onPress={() => {
-            onSelect(item);
-            onCloseModal();
-          }}
-        >
-          <Image source={item} key={index} style={styles.image} />
-        </Pressable>
-      )}
+      renderItem={renderItem}
     />
   );
 }
@@ -50,5 +61,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginRight: 20,
+  },
+  addButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#464C55",
+    borderRadius: 100,
   },
 });

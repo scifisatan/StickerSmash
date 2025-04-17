@@ -5,55 +5,81 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { type ImageSource } from "expo-image";
-import { IMAGE_HEIGHT, IMAGE_WIDTH } from "@/app/(tabs)";
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from "@/constants";
 
 type Props = {
-  index: number;
-  imageSize: number;
+  emojiSize: number;
   stickerSource: ImageSource;
 };
 
-export default function EmojiSticker({ imageSize, stickerSource }: Props) {
-  const scaleImage = useSharedValue(imageSize);
+export default function EmojiSticker({ emojiSize, stickerSource }: Props) {
+  const scale = useSharedValue(1); // used for changing size of emoji
+  const emojiAngle = useSharedValue(0);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
-  const limitStickerDrag = () => {
-    translateX.value = Math.max(0, translateX.value);
-    translateY.value = Math.max(0, translateY.value);
-
-    translateX.value = Math.min(
-      IMAGE_WIDTH - scaleImage.value,
-      translateX.value
-    );
-    translateY.value = Math.min(
-      IMAGE_HEIGHT - scaleImage.value,
-      translateY.value
-    );
-  };
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onStart(() => {
-      if (scaleImage.value !== imageSize * 2) {
-        scaleImage.value = scaleImage.value * 2;
-      } else {
-        scaleImage.value = Math.round(scaleImage.value / 2);
-      }
-      limitStickerDrag();
+      emojiAngle.value = withSpring(emojiAngle.value + 90);
     });
 
-  const imageStyle = useAnimatedStyle(() => {
-    return {
-      width: withSpring(scaleImage.value),
-      height: withSpring(scaleImage.value),
-    };
-  });
+  // TODO:Implement pinch to resize
+  // Left for now because hard to get right
+
+  // const pinch = Gesture.Pinch()
+  //   .hitSlop({
+  //     height: emojiSize + 20,
+  //     width: emojiSize + 20,
+  //     bottom: 0,
+  //     left: 0,
+  //   })
+  //   .onUpdate((e) => {
+  //     if (e.scale < 1) {
+  //       // Pinch in - make it half
+  //       scale.value = withSpring(0.5);
+  //     } else {
+  //       // Pinch out - make it double
+  //       scale.value = withSpring(2);
+  //     }
+  //     console.log(e.scale);
+  //   })
+  //   .onEnd(() => {
+  //     translateX.value = Math.max(0, translateX.value);
+  //     translateY.value = Math.max(0, translateY.value);
+
+  //     translateX.value = Math.min(
+  //       IMAGE_WIDTH - emojiSize * scale.value,
+  //       translateX.value
+  //     );
+  //     translateY.value = Math.min(
+  //       IMAGE_HEIGHT - emojiSize * scale.value,
+  //       translateY.value
+  //     );
+  //   });
 
   const drag = Gesture.Pan().onChange((event) => {
     translateX.value += event.changeX;
     translateY.value += event.changeY;
-    limitStickerDrag();
-    console.log(translateX.value, translateY.value);
+
+    translateX.value = Math.max(0, translateX.value);
+    translateY.value = Math.max(0, translateY.value);
+
+    translateX.value = Math.min(
+      IMAGE_WIDTH - emojiSize * scale.value,
+      translateX.value
+    );
+    translateY.value = Math.min(
+      IMAGE_HEIGHT - emojiSize * scale.value,
+      translateY.value
+    );
+  });
+
+  const EmojiStyle = useAnimatedStyle(() => {
+    return {
+      width: emojiSize * scale.value,
+      height: emojiSize * scale.value,
+    };
   });
 
   const containerStyle = useAnimatedStyle(() => {
@@ -66,6 +92,9 @@ export default function EmojiSticker({ imageSize, stickerSource }: Props) {
         {
           translateY: translateY.value,
         },
+        {
+          rotateZ: `${emojiAngle.value}deg`,
+        },
       ],
     };
   });
@@ -76,7 +105,7 @@ export default function EmojiSticker({ imageSize, stickerSource }: Props) {
         <Animated.Image
           source={stickerSource}
           resizeMode="contain"
-          style={[imageStyle, { width: imageSize, height: imageSize }]}
+          style={EmojiStyle}
         />
       </Animated.View>
     </GestureDetector>

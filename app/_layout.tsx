@@ -3,17 +3,23 @@
 // it is like grouped layout but enables tab
 
 import { Stack } from "expo-router";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { EmojiProvider } from "@/context/EmojiContext";
 
 export default function RootLayout() {
   return (
-    <Stack
-      screenOptions={{
-        statusBarStyle: "inverted",
-        statusBarBackgroundColor: "#25292e",
-      }}
-    >
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <ThemeProvider>
+      <EmojiProvider>
+        <Stack
+          screenOptions={{
+            statusBarStyle: "inverted",
+            statusBarBackgroundColor: "#25292e",
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </EmojiProvider>
+    </ThemeProvider>
   );
 }

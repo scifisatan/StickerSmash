@@ -1,20 +1,19 @@
 import { Text, View, StyleSheet } from "react-native";
-import {
-  BG_COLOR,
-  FOREGROUND_COLOR,
-  HIGHLIGHT_COLOR,
-  PRIMARY_COLOR,
-} from "../constants";
+import { HIGHLIGHT_COLOR, PRIMARY_COLOR } from "../../constants";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Index() {
+  const { colors } = useTheme();
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🚀 StickerSmash Guide 🚀</Text>
-      <Text style={styles.intro}>Jazz up your photos in a few easy steps:</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title]}>🚀 StickerSmash Guide 🚀</Text>
+      <Text style={[styles.intro, { color: colors.foreground }]}>
+        Jazz up your photos in a few easy steps:
+      </Text>
 
       <View style={styles.stepContainer}>
         <Text style={styles.stepNumber}>1.</Text>
-        <Text style={styles.stepText}>
+        <Text style={[styles.stepText, { color: colors.foreground }]}>
           Tap <Text style={styles.highlight}>Choose a photo</Text> to select an
           image.
         </Text>
@@ -22,49 +21,61 @@ export default function Index() {
 
       <View style={styles.stepContainer}>
         <Text style={styles.stepNumber}>2.</Text>
-        <Text style={styles.stepText}>
+        <Text style={[styles.stepText, { color: colors.foreground }]}>
           Tap <Text style={styles.highlight}>Use this photo</Text>. Now you can:
         </Text>
       </View>
       <View style={styles.subStepContainer}>
         <Text style={styles.bulletPoint}>•</Text>
-        <Text style={styles.subStepText}>
-          <Text style={styles.highlight}>Add Sticker (+):</Text> Browse and add
-          fun stickers.
+        <Text style={[styles.subStepText, { color: colors.foreground }]}>
+          <Text style={styles.highlight}>Add Sticker (+):</Text> Browse or add
+          your own custom stickers.
         </Text>
       </View>
       <View style={styles.subStepContainer}>
         <Text style={styles.bulletPoint}>•</Text>
-        <Text style={styles.subStepText}>
+        <Text style={[styles.subStepText, { color: colors.foreground }]}>
           <Text style={styles.highlight}>Reset:</Text> Clear the photo and
           stickers.
         </Text>
       </View>
       <View style={styles.subStepContainer}>
         <Text style={styles.bulletPoint}>•</Text>
-        <Text style={styles.subStepText}>
+        <Text style={[styles.subStepText, { color: colors.foreground }]}>
           <Text style={styles.highlight}>Save:</Text> Save your masterpiece.
         </Text>
       </View>
 
       <View style={styles.stepContainer}>
         <Text style={styles.stepNumber}>3.</Text>
-        <Text style={styles.stepText}>Edit stickers:</Text>
-      </View>
-      <View style={styles.subStepContainer}>
-        <Text style={styles.bulletPoint}>•</Text>
-        <Text style={styles.subStepText}>
-          <Text style={styles.highlight}>Drag</Text> to move.
+        <Text style={[styles.stepText, { color: colors.foreground }]}>
+          Edit stickers:
         </Text>
       </View>
       <View style={styles.subStepContainer}>
         <Text style={styles.bulletPoint}>•</Text>
-        <Text style={styles.subStepText}>
-          <Text style={styles.highlight}>Double-tap</Text> to resize.
+        <Text style={[styles.subStepText, { color: colors.foreground }]}>
+          <Text style={styles.highlight}>Drag</Text> to move stickers around.
+        </Text>
+      </View>
+      <View style={styles.subStepContainer}>
+        <Text style={styles.bulletPoint}>•</Text>
+        <Text style={[styles.subStepText, { color: colors.foreground }]}>
+          <Text style={styles.highlight}>Double-tap</Text> to rotate stickers.
         </Text>
       </View>
 
-      <Text style={styles.outro}>Unleash your creativity and have fun! 🎉</Text>
+      <View style={styles.stepContainer}>
+        <Text style={styles.stepNumber}>4.</Text>
+        <Text style={[styles.stepText, { color: colors.foreground }]}>
+          Toggle <Text style={styles.highlight}>Dark Mode</Text> in settings for
+          your preferred theme.
+        </Text>
+      </View>
+
+      <Text style={[styles.outro, { color: colors.foreground }]}>
+        Unleash your creativity and have fun! 🎉
+      </Text>
     </View>
   );
 }
@@ -72,7 +83,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BG_COLOR,
     alignItems: "flex-start",
     justifyContent: "center",
     paddingHorizontal: 25,
@@ -87,7 +97,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   intro: {
-    color: FOREGROUND_COLOR,
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
@@ -109,7 +118,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   stepText: {
-    color: FOREGROUND_COLOR,
     fontSize: 16,
     flex: 1,
     lineHeight: 22,
@@ -128,7 +136,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   subStepText: {
-    color: FOREGROUND_COLOR,
     fontSize: 16,
     flex: 1,
     lineHeight: 22,
@@ -138,7 +145,6 @@ const styles = StyleSheet.create({
     color: HIGHLIGHT_COLOR,
   },
   outro: {
-    color: FOREGROUND_COLOR,
     fontSize: 16,
     textAlign: "center",
     marginTop: 25,

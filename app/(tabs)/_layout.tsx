@@ -1,27 +1,31 @@
 import { Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { PRIMARY_COLOR, BG_COLOR, FOREGROUND_COLOR } from "@/app/constants";
+import { PRIMARY_COLOR } from "@/constants";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function TabLayout() {
+  const { colors } = useTheme();
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: PRIMARY_COLOR,
         headerShadowVisible: false,
-        headerTintColor: FOREGROUND_COLOR,
+        headerTintColor: colors.foreground,
         tabBarStyle: {
-          backgroundColor: BG_COLOR,
+          backgroundColor: colors.background,
+          padding: 12,
+          paddingVertical: 4,
         },
         headerStyle: {
-          backgroundColor: BG_COLOR,
+          backgroundColor: colors.background,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Sticker Smash",
+          title: "Home",
           headerTitleAlign: "center",
           headerTitleStyle: style.headerTitle,
           tabBarIcon: ({ color, focused }) => (
