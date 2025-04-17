@@ -1,0 +1,6 @@
+const BG_COLOR = "#25292e";
+const PRIMARY_COLOR = "#ffd33d";
+const FOREGROUND_COLOR = "#fff";
+const HIGHLIGHT_COLOR = "#61dafb";
+
+export { BG_COLOR, PRIMARY_COLOR, FOREGROUND_COLOR, HIGHLIGHT_COLOR };

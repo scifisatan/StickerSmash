@@ -1,45 +1,78 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs } from "expo-router";
+import { StyleSheet } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { PRIMARY_COLOR, BG_COLOR, FOREGROUND_COLOR } from "@/app/constants";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+        tabBarActiveTintColor: PRIMARY_COLOR,
+        headerShadowVisible: false,
+        headerTintColor: FOREGROUND_COLOR,
+        tabBarStyle: {
+          backgroundColor: BG_COLOR,
+        },
+        headerStyle: {
+          backgroundColor: BG_COLOR,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Sticker Smash",
+          headerTitleAlign: "center",
+          headerTitleStyle: style.headerTitle,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "home-sharp" : "home-outline"}
+              color={color}
+              size={24}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="about"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "User Guide",
+          headerTitleAlign: "center",
+          headerTitleStyle: style.headerTitle,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={
+                focused ? "information-circle" : "information-circle-outline"
+              }
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          headerTitleAlign: "center",
+          headerTitleStyle: style.headerTitle,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "settings-sharp" : "settings-outline"}
+              color={color}
+              size={24}
+            />
+          ),
         }}
       />
     </Tabs>
   );
 }
+
+const style = StyleSheet.create({
+  headerTitle: {
+    color: PRIMARY_COLOR,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+});
